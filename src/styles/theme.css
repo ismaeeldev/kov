@@ -1,0 +1,272 @@
+/*
+ * Kōv — Design tokens
+ * Single source of truth for every color, extracted verbatim from docs/02_ThemeGuideline.md
+ * §2.1, §2.2, §2.5, §2.6. Do not hardcode hex values anywhere else in the codebase —
+ * always reference these custom properties (or their Tailwind-mapped equivalents, see
+ * src/index.css's @theme block).
+ *
+ * IMPORTANT NAMING NOTE (see ThemeGuideline §2.1): the variable literally named --orange
+ * is a STEEL-BLUE color (#4A7FA5), not orange-hued. This is a deliberate, documented
+ * carry-over from the client's own source file — never "correct" it.
+ */
+
+/* ============================================================
+   §2.1 — Core brand tokens (locked — from client source)
+   ============================================================ */
+:root {
+  --noir: #0b0f17; /* primary dark background / high-emphasis text-on-light */
+  --noir2: #111622; /* secondary dark surface, one step up from --noir */
+  --noir3: #171e2c; /* tertiary dark surface, cards-on-dark */
+  --blanc: #ffffff; /* pure white, used narrowly */
+  --bg: #f7f7f5; /* light warm off-white background — the app's LIGHT-mode canvas */
+  --white: #ffffff; /* card surfaces in light mode */
+
+  /* NOTE: named "--orange" but the value is STEEL-BLUE. Brand accent — primary buttons,
+     FAB, active nav states, brand gradients. Never rename/"correct" this. */
+  --orange: #4a7fa5;
+  --od: #3a6b8f; /* accent darker shade — gradients paired with --orange */
+  --ol: #ebf3f9; /* accent light tint — background fills, badge backgrounds */
+
+  /* TRUE orange — used ONLY for urgency/alert states. Distinct from --orange. */
+  --urgence: #f97316;
+  --urgence-d: #e8640a;
+  --urgence-l: #fff4ec;
+
+  --or: #c8a96e; /* gold — secondary/premium accent, used sparingly */
+  --vert: #059669; /* success green */
+  --vl: #ecfdf5;
+  --rouge: #dc2626; /* error/destructive red */
+  --rl: #fef2f2;
+  /* WCAG AA note: --vert/--rouge fail 4.5:1 as DIRECT TEXT in both modes (measured
+     3.77–4.83:1 vs white, 3.45–4.10:1 vs dark surfaces) — fine as solid button
+     backgrounds (white text on them) or accent bars, but not as text color themselves.
+     --success-text/--error-text below are mode-aware derived variants for text use only
+     — never use --vert/--rouge directly as a `color`, only as `background-color`. */
+  --success-text-dark: #50b687; /* lightened ~30%, 6.7:1 vs noir-700 */
+  --success-text-light: #046f4a; /* darkened ~30%, 6.7:1 vs white */
+  --error-text-dark: #e67d7d; /* lightened ~30%, 6.1:1 vs noir-700 */
+  --error-text-light: #b01e1e; /* darkened ~20%, 6.9:1 vs white */
+  /* --info-text mirrors the --success-text/--error-text mode-aware pattern above —
+     added alongside the --vl/--rl/--bl dark-mode fix (see the dark-mode block below)
+     since Badge.tsx's "info" tone had the exact same latent hardcoded-hex bug. */
+  --info-text-dark: #719af2; /* lightened ~35% toward white, 5.1:1 vs the new dark info-bg */
+  --info-text-light: #1e4fbc; /* darkened ~20%, 6.6:1 vs light info-bg — matches the prior hardcoded badge value */
+  --bleu: #2563eb; /* informational blue — distinct from the steel-blue brand accent */
+  --bl: #eff6ff;
+  --gris: #6b7280; /* secondary/muted text */
+  --border: #e5e7eb; /* default hairline border, light mode */
+
+  --font: 'DM Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
+  /* AI/Agent-specific accent — dedicated, kept strictly separate from --orange */
+  --agent-grad-start: #7c3aed;
+  --agent-grad-end: #4f1d96;
+  /* WCAG AA fix (Step 14.5 accessibility pass): AgentSurface.tsx's
+     IntentConfirmationChip uses gold-300 text on a gold-500/15%-over-gradient
+     chip background — measured only 3.14:1 at the gradient's lighter
+     (--agent-grad-start) end, below the 4.5:1 required for its 13px bold
+     text (not large text; passes at the darker --agent-grad-end end at
+     5.37:1, but the chip can render anywhere along the gradient). A near-
+     white gold tint (gold-300 mixed 20%/white 80%) passes at both ends
+     (4.72:1 / 8.08:1 measured) while staying visibly gold-tinted, not pure
+     white (which would be indistinguishable from the surface's own white
+     body text). Mode-independent — the agent surface's gradient is identical
+     in both themes. */
+  --agent-chip-text: color-mix(in srgb, var(--gold-300) 20%, white);
+
+  /* Full audit (2026-09-26, docs/02_ThemeGuideline.md re-read): grepped the
+     whole codebase for stray hex literals outside this file and found 4
+     hardcoded, mode-independent text colors paired with a fixed tint
+     background (--gold-100/--urgence-100, neither of which varies by mode) —
+     same latent bug shape as the Badge.tsx tone-text fixes above, just never
+     promoted to a shared token. Both backgrounds are fixed, so these two
+     tokens are mode-independent, same posture as --agent-chip-text. */
+  --gold-tint-text: #6e5a35; /* 5.8:1 on --gold-100 (#F7F0E3) — text on gold-tinted banners/badges/pills */
+  --urgence-tint-text: #933f07; /* 6.6:1 on --urgence-100 (#FFF4EC) — text on urgence-tinted banners */
+}
+
+/* ============================================================
+   §2.2 — Extended tint-ramp system (derived, not arbitrary)
+   ============================================================ */
+:root {
+  /* Noir ramp — luxury dark-surface depth (deep slate-charcoal undertones) */
+  --noir-950: #07090e; /* deepest — modal scrims, splash overlays */
+  --noir-900: #0b0f17; /* primary dark app background — rich luxury dark slate */
+  --noir-800: #111622; /* first elevation step — recessed containers */
+  --noir-700: #171e2c; /* card-on-dark surface */
+  --noir-600: #20293b; /* raised card-on-dark / hover surface */
+  --noir-500: #2d3a52; /* dark-mode border / divider */
+  /* --noir-400 is kept for NON-TEXT use only (disabled-icon tints, subtle
+     dividers) — it fails WCAG AA as text against dark surfaces. Never use for text. */
+  --noir-400: #52637f;
+  --noir-300: #8ea0bc; /* dark-mode --text-low — passes AA (6.5:1 vs noir-700) */
+  --noir-200: #c6d3e7; /* dark-mode --text-mid — passes AA (9.8:1 vs noir-700) */
+  --noir-100: #f1f5fa; /* dark-mode high-emphasis text */
+
+  /* Steel-blue accent ramp (from --orange/--od/--ol) */
+  --accent-900: #24455c; /* deep steel-blue — pressed states */
+  --accent-700: #3a6b8f; /* = --od */
+  --accent-500: #4a7fa5; /* = --orange, primary accent */
+  --accent-300: #7fa6c3; /* light steel-blue — disabled-but-visible accents */
+  --accent-100: #ebf3f9; /* = --ol */
+
+  /* Purple AI-agent accent ramp */
+  --agent-900: #4f1d96; /* = --agent-grad-end */
+  --agent-700: #6229b8; /* mid step, gradient midpoint reference */
+  --agent-500: #7c3aed; /* = --agent-grad-start */
+  --agent-300: #b79cf2; /* light purple — agent-tinted badges on light surfaces */
+  --agent-100: #f1ebfc; /* faint purple tint — agent bubble on light mode */
+
+  /* Urgency (true orange) ramp */
+  --urgence-700: #c4530c; /* deep urgent — pressed dunning-level-3 button */
+  --urgence-500: #f97316; /* = --urgence */
+  --urgence-300: #fbaf75; /* light urgent accent */
+  --urgence-100: #fff4ec; /* = --urgence-l */
+
+  /* Gold secondary-accent ramp */
+  --gold-700: #a3854f; /* deep gold — pressed premium/financing accents */
+  --gold-500: #c8a96e; /* = --or */
+  --gold-300: #ddc79b; /* light gold */
+  --gold-100: #f7f0e3; /* faint gold tint background */
+
+  /* §2.4 margin-indicator tiers — naming per the theme doc's explicit naming note:
+     NEVER call the middle two tiers "amber"/"orange" in code, since the actual hues
+     used are steel-blue and gold respectively. */
+  --margin-green: #059669; /* = --vert, >30% */
+  --margin-steel-blue: #4a7fa5; /* = --accent-500, >20% ("good but watch it") */
+  --margin-gold: #c8a96e; /* = --gold-500, >10% (caution) */
+  --margin-red: #dc2626; /* = --rouge, <=0% (negative) */
+}
+
+/* ============================================================
+   §2.5 — Dark mode (PRIMARY — default :root state, no attribute needed)
+   ============================================================ */
+:root,
+:root[data-theme='dark'] {
+  --page-bg: var(--noir-900);
+  --surface-bg: var(--noir-700);
+  --surface-raised: var(--noir-600);
+  --recessed-bg: var(--noir-800);
+  --text-hi: var(--noir-100);
+  /* WCAG AA fix: --noir-400 (originally --text-low) fails 4.5:1 against every dark-mode
+     surface in this app (3.13–3.72:1 measured). --text-mid and --text-low both shifted
+     one step lighter (to --noir-200/--noir-300) to actually pass AA, keeping a real
+     3-tier hi/mid/low hierarchy. See docs/02_ThemeGuideline.md §2.3's updated note. */
+  --text-mid: var(--noir-200);
+  --text-low: var(--noir-300);
+  --divider: var(--noir-500);
+  --success-text: var(--success-text-dark);
+  --error-text: var(--error-text-dark);
+  --info-text: var(--info-text-dark);
+  /* MarginBox advisory-text fix (Step 14.5 accessibility pass): dark mode's
+     --text-mid (--noir-200, 8.0-8.4:1 measured) already passes AA against
+     every tier's tint background, so this is identical to --text-mid here —
+     only light mode needs a distinct value (see below). */
+  --margin-advisory-text: var(--text-mid);
+  /* WCAG AA fix: --vl/--rl/--bl (success/error/info banner backgrounds) were fixed
+     :root values tuned for LIGHT mode only (light pastel tints) — in dark mode, the
+     mode-aware --success-text/--error-text (lightened for dark surfaces) rendered
+     against these still-light backgrounds, producing real AA failures (axe-core
+     found 2.52:1 on --rl vs --error-text-dark, needs 4.5:1; §14.2.5's full-route
+     accessibility sweep). Dark-mode-only low-opacity tints over the dark surface,
+     matching the already-established `bg-margin-green/[0.15]`-style tint pattern
+     (see MarginBox.tsx / marginTier.ts), fix this while keeping light mode's
+     original pastel values untouched. */
+  --vl: color-mix(in srgb, var(--vert) 18%, var(--noir-700));
+  --rl: color-mix(in srgb, var(--rouge) 18%, var(--noir-700));
+  --bl: color-mix(in srgb, var(--bleu) 18%, var(--noir-700));
+  /* brand, urgency, gold, agent, semantic accents stay IDENTICAL between modes */
+}
+
+/* ============================================================
+   §2.6 — Light mode ("office mode" — secondary, explicit opt-in)
+   ============================================================ */
+:root[data-theme='light'] {
+  --page-bg: var(--bg);
+  --surface-bg: var(--white);
+  --surface-raised: var(--white);
+  --recessed-bg: var(--bg);
+  --text-hi: var(--noir);
+  --text-mid: var(--gris);
+  /* WCAG AA fix: the original color-mix (gris 70% / bg 30%) measured 2.64–2.83:1 against
+     both the page and card backgrounds — well below 4.5:1. A lighter mix toward --gris
+     itself (85%) instead of diluting further toward --bg fixes this (--gris alone is
+     already close to AA; diluting it toward a near-white background was the bug). */
+  --text-low: color-mix(in srgb, var(--gris) 88%, var(--noir) 12%);
+  --divider: var(--border);
+  --success-text: var(--success-text-light);
+  --error-text: var(--error-text-light);
+  --info-text: var(--info-text-light);
+  /* WCAG AA fix (Step 14.5 accessibility pass): --text-mid (--gris) against
+     any of the 4 margin-tier tint backgrounds in light mode measured
+     3.65-4.25:1 — below the required 4.5:1 for the advisory sentence's 13.5px
+     text (not large text). Same color-mix technique already used for
+     --text-low above; 80%/20% passes all 4 tiers with margin (4.98:1 worst
+     case, measured against the red tier's tint). Only MarginBox's advisory
+     line uses this — --text-mid itself is untouched, since it already passes
+     AA against the plain card/page background everywhere else it's used. */
+  --margin-advisory-text: color-mix(in srgb, var(--gris) 80%, var(--noir) 20%);
+}
+
+/* ============================================================
+   §4.1 — Spacing scale (4px base unit)
+   ============================================================ */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-3-5: 14px;
+  --space-4: 16px;
+  --space-4-5: 18px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+}
+
+/* ============================================================
+   §4.2 — Border radius (from client source conventions)
+   ============================================================ */
+:root {
+  --radius-xs: 12px; /* small icon buttons */
+  --radius-sm: 14px; /* cards, inputs, standard buttons */
+  --radius-md: 16px; /* larger cards, primary CTA buttons */
+  --radius-lg: 22px; /* modals, hero panels, onboarding containers (20-24px range) */
+  --radius-pill: 50px; /* pills, badges, tab-switchers */
+  --radius-full: 50%; /* circular FAB, avatars */
+}
+
+/* ============================================================
+   §5 — Elevation & surface treatment (colored soft shadows, never flat gray)
+   ============================================================ */
+:root,
+:root[data-theme='dark'] {
+  --shadow-raised: 0 2px 10px rgba(0, 0, 0, 0.28);
+  --shadow-floating: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+:root[data-theme='light'] {
+  --shadow-raised: 0 2px 8px rgba(10, 10, 10, 0.06);
+  --shadow-floating: 0 8px 24px rgba(10, 10, 10, 0.1);
+}
+:root {
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.5);
+  --shadow-accent-glow: 0 8px 28px rgba(74, 127, 165, 0.45), 0 3px 8px rgba(74, 127, 165, 0.3);
+  --shadow-agent-glow: 0 8px 32px rgba(124, 58, 237, 0.4), 0 3px 10px rgba(79, 29, 150, 0.3);
+  --shadow-urgence-glow: 0 8px 24px rgba(249, 115, 22, 0.35);
+  --shadow-margin-glow-green: 0 4px 20px rgba(5, 150, 105, 0.25);
+  --shadow-margin-glow-red: 0 4px 20px rgba(220, 38, 38, 0.3);
+  --shadow-hairline-highlight: rgba(255, 255, 255, 0.04); /* dark-surface top-highlight border */
+}
+
+/* ============================================================
+   Gradients (§11 item 4 — named gradients used across the app)
+   ============================================================ */
+:root {
+  --gradient-agent: linear-gradient(135deg, var(--agent-grad-start), var(--agent-grad-end));
+  --gradient-brand: linear-gradient(135deg, var(--orange), var(--od));
+}

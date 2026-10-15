@@ -1,0 +1,51 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment files — contain real secrets (Supabase service role key,
+# Anthropic API key). Explicit rule in addition to the *.local glob above
+# (which already covers .env.local) so this is never accidentally relied on
+# implicitly for the single most sensitive file in the repo.
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Test/scratch output — regenerated locally, never meant to be committed.
+test-results
+.scratch-a11y
+playwright-report
+playwright/.cache
+
+# Supabase CLI local cache — regenerated per machine on `supabase link`/`db
+# pull`, and contains the project ref, pooler hostname and org id (internal
+# infra metadata, not app source).
+supabase/.temp
+
+# Pre-project reference material and exported mockups — not app source,
+# kept locally for reference only.
+Kov_SRS_Phase_2.pdf
+Kov_SRS_Phase_2.txt
+Kov_SRS_Phase_2_Source.docx
+kov_V3_accueil_actions*.html
+Refrence/

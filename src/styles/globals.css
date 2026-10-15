@@ -1,0 +1,253 @@
+/*
+ * Kōv — Global styles entry point
+ * Imports Tailwind, the raw design tokens (theme.css), then maps every token into
+ * Tailwind v4's native @theme block so utility classes are generated from them
+ * (e.g. bg-brand, text-agent-500, shadow-accent-glow, rounded-pill).
+ *
+ * NOTE on stack version: docs/03_MasterPrompts.md Step 1.2 was written against
+ * Tailwind v3's tailwind.config.ts pattern. This project installed Tailwind v4
+ * (the genuinely "latest stable" per Step 0.5), which maps theme tokens via a
+ * CSS-native @theme block instead of a JS config file — same intent (every
+ * design-doc token becomes a real Tailwind utility, never a hardcoded hex),
+ * different (and more current) mechanism. Documented in docs/07_ProjectState.md.
+ */
+
+@import 'tailwindcss';
+@import './theme.css';
+
+/* ============================================================
+   Tailwind v4 theme mapping — every token below generates real
+   utility classes (bg-*, text-*, border-*, shadow-*, rounded-*, font-*).
+   ============================================================ */
+@theme {
+  /* Semantic surface/text tokens (mode-aware, resolve through theme.css) */
+  --color-page-bg: var(--page-bg);
+  --color-surface: var(--surface-bg);
+  --color-surface-raised: var(--surface-raised);
+  --color-recessed: var(--recessed-bg);
+  --color-text-hi: var(--text-hi);
+  --color-text-mid: var(--text-mid);
+  --color-text-low: var(--text-low);
+  --color-divider: var(--divider);
+  --color-margin-advisory-text: var(--margin-advisory-text);
+
+  /* Brand (steel-blue) ramp */
+  --color-brand-900: var(--accent-900);
+  --color-brand-700: var(--accent-700);
+  --color-brand-500: var(--accent-500);
+  --color-brand-300: var(--accent-300);
+  --color-brand-100: var(--accent-100);
+  --color-brand: var(--accent-500);
+
+  /* Noir ramp */
+  --color-noir-950: var(--noir-950);
+  --color-noir-900: var(--noir-900);
+  --color-noir-800: var(--noir-800);
+  --color-noir-700: var(--noir-700);
+  --color-noir-600: var(--noir-600);
+  --color-noir-500: var(--noir-500);
+  --color-noir-400: var(--noir-400);
+  --color-noir-300: var(--noir-300);
+  --color-noir-200: var(--noir-200);
+  --color-noir-100: var(--noir-100);
+
+  /* Agent (AI, purple) ramp */
+  --color-agent-900: var(--agent-900);
+  --color-agent-700: var(--agent-700);
+  --color-agent-500: var(--agent-500);
+  --color-agent-300: var(--agent-300);
+  --color-agent-100: var(--agent-100);
+  --color-agent: var(--agent-500);
+  --color-agent-chip-text: var(--agent-chip-text);
+
+  /* Urgency (true orange) ramp */
+  --color-urgence-700: var(--urgence-700);
+  --color-urgence-500: var(--urgence-500);
+  --color-urgence-300: var(--urgence-300);
+  --color-urgence-100: var(--urgence-100);
+  --color-urgence: var(--urgence-500);
+  --color-urgence-tint-text: var(--urgence-tint-text);
+
+  /* Gold (secondary/premium) ramp */
+  --color-gold-700: var(--gold-700);
+  --color-gold-500: var(--gold-500);
+  --color-gold-300: var(--gold-300);
+  --color-gold-100: var(--gold-100);
+  --color-gold: var(--gold-500);
+  --color-gold-tint-text: var(--gold-tint-text);
+
+  /* Semantic status colors */
+  --color-success: var(--vert);
+  --color-success-bg: var(--vl);
+  /* Use --color-success-text (not --color-success) for TEXT — --vert fails WCAG AA as
+     direct text in both modes (see theme.css's note next to --success-text-dark/-light). */
+  --color-success-text: var(--success-text);
+  --color-error: var(--rouge);
+  --color-error-bg: var(--rl);
+  --color-error-text: var(--error-text);
+  --color-info: var(--bleu);
+  --color-info-bg: var(--bl);
+  /* Use --color-info-text (not --color-info) for TEXT — same reasoning as
+     --color-success-text/--color-error-text above (see theme.css's --info-text-dark/-light). */
+  --color-info-text: var(--info-text);
+
+  /* Margin-indicator tiers — NEVER "amber"/"orange", see theme.css's naming note */
+  --color-margin-green: var(--margin-green);
+  --color-margin-steel-blue: var(--margin-steel-blue);
+  --color-margin-gold: var(--margin-gold);
+  --color-margin-red: var(--margin-red);
+
+  /* Typography */
+  --font-sans: var(--font);
+  --font-serif: var(--serif);
+
+  /* Spacing scale (§4.1) */
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-3-5: var(--space-3-5);
+  --spacing-4: var(--space-4);
+  --spacing-4-5: var(--space-4-5);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+
+  /* Border radius (§4.2) */
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+  --radius-full: var(--radius-full);
+
+  /* Shadows (§5) */
+  --shadow-flat: 0 0 0 1px var(--divider);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-floating: var(--shadow-floating);
+  --shadow-modal: var(--shadow-modal);
+  --shadow-accent-glow: var(--shadow-accent-glow);
+  --shadow-agent-glow: var(--shadow-agent-glow);
+  --shadow-urgence-glow: var(--shadow-urgence-glow);
+  --shadow-margin-glow-green: var(--shadow-margin-glow-green);
+  --shadow-margin-glow-red: var(--shadow-margin-glow-red);
+
+  /* Gradients */
+  --gradient-agent: var(--gradient-agent);
+  --gradient-brand: var(--gradient-brand);
+
+  /* Breakpoints (§4.3) — Tailwind defaults are close; override to match the exact spec */
+  --breakpoint-sm: 640px; /* tablet starts */
+  --breakpoint-lg: 1024px; /* desktop starts */
+  --breakpoint-xl: 1440px; /* wide starts */
+}
+
+/* ============================================================
+   Base reset
+   ============================================================ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-family: var(--font);
+    color-scheme: dark;
+  }
+
+  html[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text-hi);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Tabular numerals mandatory on every live-updating figure (§3.1, §3.3) */
+  .tabular-nums,
+  .figure,
+  .figure-lg {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ============================================================
+   Skeleton shimmer keyframe (Step 3, src/components/ui/Skeleton.tsx) —
+   steel-blue-tinted per docs/02_ThemeGuideline.md §9, never generic gray.
+   ============================================================ */
+@keyframes kov-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================================
+   Agent "thinking" indicator (Step 16.6) — a bespoke 3-dot stagger
+   replacing the generic animate-ping dot, matching the gold accent used
+   elsewhere on the agent conversation surface rather than a plain white
+   pulse. Each dot's [animation-delay] is set inline per-instance.
+   ============================================================ */
+@keyframes kov-agent-thinking {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+.animate-agent-thinking {
+  animation: kov-agent-thinking 1.1s ease-in-out infinite;
+}
+
+/* ============================================================
+   §9.1 rule 3 / §10 — prefers-reduced-motion (accessibility requirement,
+   not optional). Every animation gets a reduced/instant fallback.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

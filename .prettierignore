@@ -1,0 +1,13 @@
+# Never reformat the reference/spec material — these are read-only project references,
+# not source code the formatter should touch.
+docs/
+kov_V3_accueil_actions (1).html
+Kov_SRS_Phase_2.pdf
+Kov_SRS_Phase_2.txt
+Kov_SRS_Phase_2_Source.docx
+Refrence/
+
+# Standard build/dependency output
+dist/
+node_modules/
+package-lock.json

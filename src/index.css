@@ -1,0 +1,100 @@
+/*
+ * Kōv — App entry stylesheet.
+ * Loads Tailwind + the full Kōv design-token system (src/styles/globals.css), then maps
+ * shadcn/ui's own semantic token layer (--primary, --background, --border, --destructive,
+ * etc. — the names shadcn-generated components like src/components/ui/button.tsx expect)
+ * onto Kōv's REAL palette from docs/02_ThemeGuideline.md, instead of shadcn's generic
+ * gray defaults. This is the standard, correct way to theme a shadcn/ui project — keep
+ * shadcn's semantic names (so every future `npx shadcn add <component>` still works
+ * out of the box), but point them at our own brand values.
+ *
+ * For Kōv-specific work (MarginBox, AgentSurface, JournalTimeline, and anything using the
+ * brand/agent/urgence/gold/margin-* tokens), use the Kōv-native Tailwind classes generated
+ * from src/styles/globals.css's @theme block instead (bg-brand-500, text-agent-500, etc.)
+ * — never hardcode a hex value inline in a component, per docs/02_ThemeGuideline.md §11.
+ */
+
+@import './styles/globals.css';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css'; /* Radix/shadcn animation keyframes + custom variants (accordion, dialog, etc.) */
+
+/* ============================================================
+   shadcn/ui semantic tokens, remapped to Kōv's real palette.
+   Dark is the PRIMARY mode (matches docs/02_ThemeGuideline.md §2.5) — these are the
+   default :root values. Light mode overrides below, under [data-theme="light"].
+   ============================================================ */
+:root {
+  --background: var(--page-bg);
+  --foreground: var(--text-hi);
+
+  --card: var(--surface-bg);
+  --card-foreground: var(--text-hi);
+
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text-hi);
+
+  --primary: var(--accent-500);
+  --primary-foreground: var(--blanc);
+
+  --secondary: var(--noir-600);
+  --secondary-foreground: var(--text-hi);
+
+  --muted: var(--recessed-bg);
+  --muted-foreground: var(--text-mid);
+
+  --accent: var(--accent-100);
+  --accent-foreground: var(--accent-900);
+
+  --destructive: var(--rouge);
+  --destructive-foreground: var(--blanc);
+
+  --border: var(--divider);
+  --input: var(--divider);
+  --ring: var(--accent-500);
+
+  --radius: 0.875rem; /* 14px, = --radius-sm — shadcn's own radius scale multiplies from this */
+}
+
+:root[data-theme='light'] {
+  --background: var(--page-bg);
+  --foreground: var(--text-hi);
+  --card: var(--surface-bg);
+  --card-foreground: var(--text-hi);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text-hi);
+  --primary: var(--accent-500);
+  --primary-foreground: var(--blanc);
+  --secondary: var(--ol);
+  --secondary-foreground: var(--accent-900);
+  --muted: var(--recessed-bg);
+  --muted-foreground: var(--text-mid);
+  --accent: var(--accent-100);
+  --accent-foreground: var(--accent-900);
+  --destructive: var(--rouge);
+  --destructive-foreground: var(--blanc);
+  --border: var(--divider);
+  --input: var(--divider);
+  --ring: var(--accent-500);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
