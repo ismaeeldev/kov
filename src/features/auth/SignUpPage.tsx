@@ -65,7 +65,19 @@ export default function SignUpPage() {
     setStatus('submitting')
     setErrorMessage(null)
 
-    const { error } = await supabase.auth.signUp({ email, password })
+    // Explicit emailRedirectTo — without it, Supabase falls back to the
+    // project's dashboard-configured Site URL, which defaults to
+    // http://127.0.0.1:3000 and is easy to leave unconfigured after a prod
+    // deploy. This is what caused "confirmation link leads to an
+    // inaccessible site" in production (client-reported, 2026-10-21):
+    // pinning it to window.location.origin makes the link always point at
+    // wherever the app is actually being used, regardless of dashboard
+    // config drift.
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/sign-in` },
+    })
 
     if (error) {
       submittingRef.current = false
